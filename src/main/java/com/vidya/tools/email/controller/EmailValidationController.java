@@ -33,19 +33,21 @@ public class EmailValidationController {
 	@Autowired
 	private Converter<ValidationRequestVO,ValidationRequest> validationRequestConverter;
 	
-	@RequestMapping(value = "/{email}", method = RequestMethod.GET)
-	public @ResponseBody ValidationResponseVO validate(@PathVariable("email") String email) {
+	@RequestMapping(value = "/{email:.+}", method = RequestMethod.GET)
+	@ResponseBody 
+	public ValidationResponseVO validate(@PathVariable("email") String email) {
 
 		ValidationResponse validationResponse = emailValidationService.isValid(email);
 		return validationResponseVOConverter.convert(validationResponse);
 	}
 
 	@RequestMapping(value = "/emails", method = RequestMethod.POST)
-	public @ResponseBody List<ValidationResponseVO> validate(@Size(min=1) @RequestBody List<ValidationRequestVO> requestVOList) {
+	@ResponseBody
+	public List<ValidationResponseVO> validate(@Size(min=1) @RequestBody List<ValidationRequestVO> requestVOList) {
 		
-		return requestVOList.stream().map(requestVO -> validationRequestConverter.convert(requestVO))
-			.map(request -> emailValidationService.isValid(request))
-			.map(response -> validationResponseVOConverter.convert(response))
+		return requestVOList.stream().map(validationRequestConverter::convert)
+			.map(emailValidationService::isValid)
+			.map(validationResponseVOConverter::convert)
 			.collect(Collectors.toList());
 	}
 }

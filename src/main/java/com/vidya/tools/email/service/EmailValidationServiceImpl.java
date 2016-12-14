@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.vidya.tools.email.db.model.Company;
 import com.vidya.tools.email.db.model.Email;
 import com.vidya.tools.email.extractor.DomainNameExtractor;
 import com.vidya.tools.email.model.ValidationRequest;
@@ -52,20 +51,7 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 		String domain = domainNameExtractor.extract(email);
 		
 		List<String> mxRecords = mxRecordFetcher.fetch(domain);
-		boolean validSMTP = false;
-		String validMXRecord = null;
-		for(String mxRecord : mxRecords){
-			
-			validSMTP = smtpValidator.isValid(mxRecord, email);
-			if(validSMTP) {
-				validMXRecord = mxRecord;
-			}				
-		}		
-		
-		Company company = new Company.Builder()
-					.domain(domain)
-					.mxRecord(validMXRecord)
-					.build();
+		boolean validSMTP = isValidSMTPExistsInMXRecords(email, mxRecords);		
 		
 		Email emailObj = new Email.Builder(email)
 					.validSyntax(syntaxValidator.isValid(email))
@@ -77,8 +63,15 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 					.validCompanyEmailPattern(companyEmailPatternValidator.isValid(email))					
 					.build();
 		
-		ValidationResponse validationResponse = new ValidationResponse(email,emailObj.isValid());
-		return validationResponse;
+		return new ValidationResponse(email,emailObj.isValid());
+	}
+
+	private boolean isValidSMTPExistsInMXRecords(String email, List<String> mxRecords) {
+		boolean validSMTP = false;
+		for(String mxRecord : mxRecords) {
+			validSMTP = smtpValidator.isValid(mxRecord, email);
+		}
+		return validSMTP;
 	}
 
 	@Override

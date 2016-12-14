@@ -4,8 +4,9 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	
-	<property name="now" value="UNIX_TIMESTAMP()" dbms="mysql"/>
 	<property name="now" value="CURRENT_TIMESTAMP()" dbms="h2"/>
+	<property name="now" value="now()" dbms="mysql"/>
+    <property name="now" value="now()" dbms="postgresql"/>
 	
 	<changeSet id="1" author="vidya">
 		<createTable tableName="EMAIL">
@@ -41,13 +42,9 @@
 				defaultValueBoolean="false">
 				<constraints nullable="false" />
 			</column>
-			<column name="CREATED_TS" type="timestamp" defaultValue="${now}" />
-			<column name="MODIFIED_TS" type="timestamp" defaultValue="${now}" />
+			<column name="CREATED_TS" type="datetime" valueDate="${now}" />
+			<column name="MODIFIED_TS" type="datetime" valueDate="${now}" />
 		</createTable>
-
-		<createIndex indexName="idx_EMAIL_EMAIL_ADDRESS" tableName="EMAIL" unique="true">
-			<column name="EMAIL_ADDRESS" type="varchar(255)" />
-		</createIndex>
 
 		<createTable tableName="COMPANY">
 			<column name="ID" type="bigint" autoIncrement="true">
@@ -68,17 +65,9 @@
 			<column name="EMAIL_PATTERN" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
-			<column name="CREATED_TS" type="timestamp" defaultValue="${now}" />
-			<column name="MODIFIED_TS" type="timestamp" defaultValue="${now}" />
+			<column name="CREATED_TS" type="datetime" valueDate="${now}" />
+			<column name="MODIFIED_TS" type="datetime" valueDate="${now}" />
 		</createTable>
-
-		<createIndex indexName="idx_COMPANY_DOMAIN" tableName="COMPANY" unique="true">
-			<column name="DOMAIN" type="varchar(255)" />
-		</createIndex>
-
-		<createIndex indexName="idx_COMPANY_NAME" tableName="COMPANY" unique="true">
-			<column name="NAME" type="varchar(255)" />
-		</createIndex>
 
 		<createTable tableName="EMAIL_TO_COMPANY">
 			<column name="EMAIL_ID" type="bigint">
@@ -93,25 +82,17 @@
 			<column name="DOMAIN" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
-			<column name="CREATED_TS" type="timestamp" defaultValue="${now}" />
-			<column name="MODIFIED_TS" type="timestamp" defaultValue="${now}" />
+			<column name="CREATED_TS" type="datetime" valueDate="${now}" />
+			<column name="MODIFIED_TS" type="datetime" valueDate="${now}" />
 		</createTable>
-
-		<createIndex indexName="idx_DISPOSABLE_EMAIL_DOMAINS_CONFIG_DOMAIN" tableName="DISPOSABLE_EMAIL_DOMAINS_CONFIG" unique="true">
-			<column name="DOMAIN" type="varchar(255)" />
-		</createIndex>
 
 		<createTable tableName="FREE_EMAIL_DOMAINS_CONFIG">
 			<column name="DOMAIN" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
-			<column name="CREATED_TS" type="timestamp" defaultValue="${now}" />
-			<column name="MODIFIED_TS" type="timestamp" defaultValue="${now}" />
+			<column name="CREATED_TS" type="datetime" valueDate="${now}" />
+			<column name="MODIFIED_TS" type="datetime" valueDate="${now}" />
 		</createTable>
-
-		<createIndex indexName="idx_FREE_EMAIL_DOMAINS_CONFIG_DOMAIN" tableName="FREE_EMAIL_DOMAINS_CONFIG" unique="true">
-			<column name="DOMAIN" type="varchar(255)" />
-		</createIndex>
 
 		<rollback>
 			<dropTable tableName="EMAIL"/>
@@ -122,7 +103,36 @@
 		</rollback>
 		
 		<modifySql dbms="mysql">
-			<append value=" engine innodb" />
+			<append value=" ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;" />
 		</modifySql>		
+	</changeSet>
+	<changeSet id="2" author="vidya">
+		<createIndex indexName="idx_EMAIL_EMAIL_ADDRESS" tableName="EMAIL" unique="true">
+			<column name="EMAIL_ADDRESS" type="varchar(255)" />
+		</createIndex>
+
+		<createIndex indexName="idx_COMPANY_DOMAIN" tableName="COMPANY" unique="true">
+			<column name="DOMAIN" type="varchar(255)" />
+		</createIndex>
+
+		<createIndex indexName="idx_COMPANY_NAME" tableName="COMPANY" unique="true">
+			<column name="NAME" type="varchar(255)" />
+		</createIndex>
+
+		<createIndex indexName="idx_DISPOSABLE_EMAIL_DOMAINS_CONFIG_DOMAIN" tableName="DISPOSABLE_EMAIL_DOMAINS_CONFIG" unique="true">
+			<column name="DOMAIN" type="varchar(255)" />
+		</createIndex>
+
+		<createIndex indexName="idx_FREE_EMAIL_DOMAINS_CONFIG_DOMAIN" tableName="FREE_EMAIL_DOMAINS_CONFIG" unique="true">
+			<column name="DOMAIN" type="varchar(255)" />
+		</createIndex>
+
+		<rollback>
+			<dropIndex indexName="idx_EMAIL_EMAIL_ADDRESS" tableName="EMAIL"/>
+			<dropIndex indexName="idx_COMPANY_DOMAIN" tableName="COMPANY"/>
+			<dropIndex indexName="idx_COMPANY_NAME" tableName="COMPANY"/>
+			<dropIndex indexName="idx_DISPOSABLE_EMAIL_DOMAINS_CONFIG_DOMAIN" tableName="DISPOSABLE_EMAIL_DOMAINS_CONFIG"/>
+			<dropIndex indexName="idx_FREE_EMAIL_DOMAINS_CONFIG_DOMAIN" tableName="FREE_EMAIL_DOMAINS_CONFIG"/>
+		</rollback>
 	</changeSet>
 </databaseChangeLog>
