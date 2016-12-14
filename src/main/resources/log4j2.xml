@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">	
+	<Appenders>
+		<Console name="console-log" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="%highlight{%d{DATE} [%t] %-5level: %msg%n%throwable}" />
+		</Console>
+		<RollingFile name="trace-log" fileName="${sys:catalina.home}/email-validator.log"
+			filePattern="${sys:catalina.home}/mycuteblog-trace-%d{DATE}{yyyy-MM-dd}.log">
+			<PatternLayout>
+				<pattern>%highlight{%d{DATE} [%t] %-5level: %msg%n%throwable}</pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+			</Policies>
+		</RollingFile>
+		<RollingFile name="error-log" fileName="${sys:catalina.home}/email-validator.log"
+			filePattern="${sys:catalina.home}/mycuteblog-error-%d{DATE}{yyyy-MM-dd}.log">
+			<PatternLayout>
+				<pattern>%highlight{%d{DATE} [%t] %-5level: %msg%n%throwable}</pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+			</Policies>
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Logger name="com.vidya.tools.email" level="debug" additivity="false">
+			<appender-ref ref="trace-log" level="debug" />
+			<appender-ref ref="error-log" level="error" />			
+		</Logger>
+		<Root level="info">
+			<AppenderRef ref="console-log" />
+		</Root>
+	</Loggers>
+</Configuration>
