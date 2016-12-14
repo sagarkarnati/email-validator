@@ -1,8 +1,17 @@
+# kickstart travis.
 language: java
-sudo: false
-
 jdk:
   - oraclejdk8
+  - oraclejdk7
+#before_install: sudo pip install codecov
+#after_success: codecov
 
-after_success:
-  - mvn jacoco:report coveralls:report
+# need to override travis 'install' since it will try gpg sign and fail.
+install: mvn clean install
+
+#branches:
+#  except:
+#      - mvn-repo
+notifications:
+  email:
+    - vidyasagarkarnati@yahoo.com
