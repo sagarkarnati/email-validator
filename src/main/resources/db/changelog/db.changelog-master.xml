@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	
+	<property name="now" value="UNIX_TIMESTAMP()" dbms="mysql"/>
+	<property name="now" value="CURRENT_TIMESTAMP()" dbms="h2"/>
+	
+	<changeSet id="1" author="vidya">
+		<createTable tableName="EMAIL">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="EMAIL_ADDRESS" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="VALID" type="boolean" defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+			<column name="VALID_SYNTAX" type="boolean"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+			<column name="IS_DISPOSALBE" type="boolean"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+			<column name="IS_FREE_EMAIL" type="boolean"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+			<column name="VALID_MX_RECORD" type="boolean"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+			<column name="VALID_SMTP" type="boolean" defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+			<column name="VALID_COMPANY_EMAIL_PATTERN" type="boolean"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREATED_TS" type="timestamp" defaultValue="${now}" />
+			<column name="MODIFIED_TS" type="timestamp" defaultValue="${now}" />
+		</createTable>
+
+		<createIndex indexName="idx_EMAIL_EMAIL_ADDRESS" tableName="EMAIL" unique="true">
+			<column name="EMAIL_ADDRESS" type="varchar(255)" />
+		</createIndex>
+
+		<createTable tableName="COMPANY">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="NAME" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="URL" type="varchar(255)">
+				<constraints nullable="true" />
+			</column>
+			<column name="DOMAIN" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="MXRECORD" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EMAIL_PATTERN" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREATED_TS" type="timestamp" defaultValue="${now}" />
+			<column name="MODIFIED_TS" type="timestamp" defaultValue="${now}" />
+		</createTable>
+
+		<createIndex indexName="idx_COMPANY_DOMAIN" tableName="COMPANY" unique="true">
+			<column name="DOMAIN" type="varchar(255)" />
+		</createIndex>
+
+		<createIndex indexName="idx_COMPANY_NAME" tableName="COMPANY" unique="true">
+			<column name="NAME" type="varchar(255)" />
+		</createIndex>
+
+		<createTable tableName="EMAIL_TO_COMPANY">
+			<column name="EMAIL_ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="COMPANY_ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="DISPOSABLE_EMAIL_DOMAINS_CONFIG">
+			<column name="DOMAIN" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREATED_TS" type="timestamp" defaultValue="${now}" />
+			<column name="MODIFIED_TS" type="timestamp" defaultValue="${now}" />
+		</createTable>
+
+		<createIndex indexName="idx_DISPOSABLE_EMAIL_DOMAINS_CONFIG_DOMAIN" tableName="DISPOSABLE_EMAIL_DOMAINS_CONFIG" unique="true">
+			<column name="DOMAIN" type="varchar(255)" />
+		</createIndex>
+
+		<createTable tableName="FREE_EMAIL_DOMAINS_CONFIG">
+			<column name="DOMAIN" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREATED_TS" type="timestamp" defaultValue="${now}" />
+			<column name="MODIFIED_TS" type="timestamp" defaultValue="${now}" />
+		</createTable>
+
+		<createIndex indexName="idx_FREE_EMAIL_DOMAINS_CONFIG_DOMAIN" tableName="FREE_EMAIL_DOMAINS_CONFIG" unique="true">
+			<column name="DOMAIN" type="varchar(255)" />
+		</createIndex>
+
+		<rollback>
+			<dropTable tableName="EMAIL"/>
+			<dropTable tableName="COMPANY"/>
+			<dropTable tableName="EMAIL_TO_COMPANY"/>
+			<dropTable tableName="DISPOSABLE_EMAIL_DOMAINS_CONFIG"/>
+			<dropTable tableName="FREE_EMAIL_DOMAINS_CONFIG"/>
+		</rollback>
+		
+		<modifySql dbms="mysql">
+			<append value=" engine innodb" />
+		</modifySql>		
+	</changeSet>
+</databaseChangeLog>
