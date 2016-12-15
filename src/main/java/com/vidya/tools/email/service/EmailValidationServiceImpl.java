@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.vidya.tools.email.dao.EmailValidationDAO;
 import com.vidya.tools.email.db.model.Email;
 import com.vidya.tools.email.extractor.DomainNameExtractor;
 import com.vidya.tools.email.model.ValidationRequest;
@@ -45,6 +46,9 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 	@Autowired
 	private CompanyEmailPatternValidator companyEmailPatternValidator; 
 	
+	@Autowired
+	private EmailValidationDAO emailValidationDAO;
+	
 	@Override
 	public ValidationResponse isValid(String email) {
 		
@@ -62,6 +66,9 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 					.validSMTP(validSMTP)
 					.validCompanyEmailPattern(companyEmailPatternValidator.isValid(email))					
 					.build();
+		
+		//save this to DB
+		emailValidationDAO.save(emailObj);
 		
 		return new ValidationResponse(email,emailObj.isValid());
 	}

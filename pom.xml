@@ -20,6 +20,8 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<main.basedir>${project.parent.parent.basedir}</main.basedir>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<git.commit.link>${project.scm.url}/commit/${buildNumber}</git.commit.link>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -108,6 +110,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.hazelcast</groupId>
+			<artifactId>hazelcast</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.hazelcast</groupId>
+			<artifactId>hazelcast-spring</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.togglz</groupId>
@@ -222,17 +232,12 @@
 							</excludes>
 						</configuration>
 						<executions>
-							<!-- Prepares the property pointing to the JaCoCo runtime agent which 
-								is passed as VM argument when Maven the Surefire plugin is executed. -->
 							<execution>
 								<id>pre-unit-test</id>
 								<goals>
 									<goal>prepare-agent</goal>
 								</goals>
 							</execution>
-
-							<!-- Ensures that the code coverage report for unit tests is created 
-								after unit tests have been run. -->
 							<execution>
 								<id>post-unit-test</id>
 								<phase>test</phase>

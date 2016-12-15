@@ -1,8 +1,12 @@
 package com.vidya.tools.email.db.model;
 
+import java.io.Serializable;
+
 import com.vidya.tools.email.builder.BooleanBuilder;
 
-public class Email {
+public class Email implements Serializable {
+
+	private static final long serialVersionUID = 5089321232789302463L;
 
 	private long id;
 	private String emailAddress;

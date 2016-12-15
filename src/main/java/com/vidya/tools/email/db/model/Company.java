@@ -1,6 +1,10 @@
 package com.vidya.tools.email.db.model;
 
-public class Company {
+import java.io.Serializable;
+
+public class Company implements Serializable {
+
+	private static final long serialVersionUID = -8556777693485064665L;
 
 	private long id;
 	private String name;

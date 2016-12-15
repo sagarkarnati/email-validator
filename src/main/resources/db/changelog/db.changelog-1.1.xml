@@ -4,6 +4,13 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-	<include file="db/changelog/db.changelog-1.0.xml" />
-	<include file="db/changelog/db.changelog-1.1.xml" />
+	<changeSet id="3" author="vidya">
+		<sql splitStatements="true" stripComments="true">
+			INSERT INTO FREE_EMAIL_DOMAINS_CONFIG (DOMAIN) VALUES ('gmail.com');
+			INSERT INTO FREE_EMAIL_DOMAINS_CONFIG (DOMAIN) VALUES ('yahoo.com');
+			INSERT INTO FREE_EMAIL_DOMAINS_CONFIG (DOMAIN) VALUES ('yahoo.co.in');
+			INSERT INTO FREE_EMAIL_DOMAINS_CONFIG (DOMAIN) VALUES ('outlook.com');
+			INSERT INTO FREE_EMAIL_DOMAINS_CONFIG (DOMAIN) VALUES ('facebook.com');
+		</sql>
+	</changeSet>
 </databaseChangeLog>

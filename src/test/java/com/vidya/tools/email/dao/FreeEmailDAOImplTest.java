@@ -39,7 +39,6 @@ public class FreeEmailDAOImplTest {
 	}
 	
 	@Test	
-	@Sql({"/data/FREE_EMAIL_DOMAINS_CONFIG-insert.sql"})
 	public void test_happyPath() {
 		
 		boolean isFreeEmailDomain = freeEmailDAOImpl.isFreeEmailDomain("gmail.com");
@@ -50,7 +49,6 @@ public class FreeEmailDAOImplTest {
 	}
 	
 	@Test
-	@Sql({"/data/FREE_EMAIL_DOMAINS_CONFIG-insert.sql"})
 	public void test_fail() {
 		
 		boolean isFreeEmailDomain = freeEmailDAOImpl.isFreeEmailDomain("hiregrid.io");
