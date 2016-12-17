@@ -21,61 +21,62 @@ import com.vidya.tools.email.validator.SyntaxValidator;
 
 @Service
 public class EmailValidationServiceImpl implements EmailValidationService {
-	
+
 	@Autowired
 	private SyntaxValidator syntaxValidator;
-	
+
 	@Autowired
 	private DomainNameValidator domainNameValidator;
-	
+
 	@Autowired
-	private DisposableEmailValidator disposableEmailValidator; 
-	
+	private DisposableEmailValidator disposableEmailValidator;
+
 	@Autowired
 	private SMTPValidator smtpValidator;
-	
+
 	@Autowired
 	private MXRecordFetcher mxRecordFetcher;
-	
+
 	@Autowired
 	private DomainNameExtractor domainNameExtractor;
 
 	@Autowired
-	private FreeEmailValidator freeEmailValidator; 
-	
+	private FreeEmailValidator freeEmailValidator;
+
 	@Autowired
-	private CompanyEmailPatternValidator companyEmailPatternValidator; 
-	
+	private CompanyEmailPatternValidator companyEmailPatternValidator;
+
 	@Autowired
 	private EmailValidationDAO emailValidationDAO;
-	
+
 	@Override
 	public ValidationResponse isValid(String email) {
-		
-		String domain = domainNameExtractor.extract(email);
-		
-		List<String> mxRecords = mxRecordFetcher.fetch(domain);
-		boolean validSMTP = isValidSMTPExistsInMXRecords(email, mxRecords);		
-		
-		Email emailObj = new Email.Builder(email)
-					.validSyntax(syntaxValidator.isValid(email))
+
+		// first check for the existing entry
+		Email email4mDB = emailValidationDAO.find(email);
+		if (email4mDB == null) {
+			String domain = domainNameExtractor.extract(email);
+
+			List<String> mxRecords = mxRecordFetcher.fetch(domain);
+			boolean validSMTP = isValidSMTPExistsInMXRecords(email, mxRecords);
+
+			Email emailObj = new Email.Builder(email).validSyntax(syntaxValidator.isValid(email))
 					.disposable(disposableEmailValidator.isDisposableEmail(email))
 					.freeEmail(freeEmailValidator.isFreeEmailDomain(domain))
-					.validDomain(domainNameValidator.isValid(email))
-					.validMxRecords(!CollectionUtils.isEmpty(mxRecords))
+					.validDomain(domainNameValidator.isValid(email)).validMxRecords(!CollectionUtils.isEmpty(mxRecords))
 					.validSMTP(validSMTP)
-					.validCompanyEmailPattern(companyEmailPatternValidator.isValid(email))					
+					// .validCompanyEmailPattern(companyEmailPatternValidator.isValid(email))
 					.build();
-		
-		//save this to DB
-		emailValidationDAO.save(emailObj);
-		
-		return new ValidationResponse(email,emailObj.isValid());
+
+			// save this to DB
+			email4mDB = emailValidationDAO.save(emailObj);
+		}
+		return new ValidationResponse(email, email4mDB.isValid());
 	}
 
 	private boolean isValidSMTPExistsInMXRecords(String email, List<String> mxRecords) {
 		boolean validSMTP = false;
-		for(String mxRecord : mxRecords) {
+		for (String mxRecord : mxRecords) {
 			validSMTP = smtpValidator.isValid(mxRecord, email);
 		}
 		return validSMTP;

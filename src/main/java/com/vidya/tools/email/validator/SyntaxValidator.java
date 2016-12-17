@@ -18,7 +18,7 @@ public class SyntaxValidator {
 		pattern = Pattern.compile(EMAIL_PATTERN);
 	}
 	
-	@Cacheable("SyntaxValidatorCache")
+	@Cacheable("syntaxValidatorCache")
 	public boolean isValid(final String email) {
 
 		Matcher matcher = pattern.matcher(email);
