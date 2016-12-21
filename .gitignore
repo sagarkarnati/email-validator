@@ -1,4 +1,5 @@
 target/
+${sys:catalina.home}/
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
